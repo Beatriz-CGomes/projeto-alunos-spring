@@ -2,11 +2,17 @@ package com.michelleBrito.demo.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,6 +28,13 @@ public class Cursos implements Serializable {
 	private String descricaoCurso;
 	private BigDecimal duracao;
 
+	
+	//associação de tabelas
+	@OneToMany(mappedBy = "cursos", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties("cursos")
+	private List<Alunos> alunos = new ArrayList<>();
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -53,5 +66,12 @@ public class Cursos implements Serializable {
 	public void setDuracao(BigDecimal duracao) {
 		this.duracao = duracao;
 	}
+	
+	public List<Alunos> getAlunos() {
+		return alunos;
+	}
 
+	public void setAlunos(List<Alunos> alunos) {
+		this.alunos = alunos;
+	}
 }

@@ -3,10 +3,13 @@ package com.michelleBrito.demo.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,6 +28,12 @@ public class Alunos implements Serializable {
 
 	private BigDecimal matricula;
 
+
+	//associação de tabelas
+	@ManyToOne
+	@JsonIgnoreProperties("alunos")
+	private Cursos cursos;
+	
 	public long getId() {
 		return id;
 	}
@@ -56,5 +65,12 @@ public class Alunos implements Serializable {
 	public void setMatricula(BigDecimal matricula) {
 		this.matricula = matricula;
 	}
+	
+	public Cursos getCursos() {
+		return cursos;
+	}
 
+	public void setCursos(Cursos cursos) {
+		this.cursos = cursos;
+	}
 }

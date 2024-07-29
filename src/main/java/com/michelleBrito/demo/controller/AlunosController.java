@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.michelleBrito.demo.model.Alunos;
+import com.michelleBrito.demo.repository.AlunosRepository;
+import com.michelleBrito.demo.repository.CursosRepository;
 import com.michelleBrito.demo.service.AlunosService;
 
 @RestController
@@ -25,6 +27,12 @@ public class AlunosController {
 
 	@Autowired
 	private AlunosService alunoService;
+
+	@Autowired
+	private CursosRepository cursosRepository;
+
+	@Autowired
+	private AlunosRepository alunosRepository;
 
 	@GetMapping()
 	public ResponseEntity<List<Alunos>> findAll() {
@@ -66,7 +74,11 @@ public class AlunosController {
 
 	@PostMapping
 	public ResponseEntity<Alunos> post(@RequestBody Alunos alunos) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.postAluno(alunos));
+		if (cursosRepository.existsById(alunos.getCursos().getId())) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.postAluno(alunos));
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	@DeleteMapping("/{id}")
@@ -86,12 +98,13 @@ public class AlunosController {
 	public ResponseEntity<Alunos> putAlunos(@RequestBody Alunos alunos, @PathVariable Long id) {
 		Alunos alunosUpdate = alunoService.putAluno(id, alunos);
 
-		if (alunosUpdate != null) {
-			return ResponseEntity.ok().body(alunosUpdate);
-		} else {
-			return ResponseEntity.notFound().build();
+		if (alunosRepository.existsById(alunos.getId())) {
+			if (cursosRepository.existsById(alunos.getCursos().getId())) {
+				return ResponseEntity.ok().body(alunosUpdate);
+			}
 		}
 
+		return ResponseEntity.notFound().build();
 	}
 
 }
