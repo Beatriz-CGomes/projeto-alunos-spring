@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,16 +66,28 @@ public class AlunosController {
 
 	@PostMapping
 	public ResponseEntity<Alunos> post(@RequestBody Alunos alunos) {
-		return ResponseEntity.ok().body(alunoService.postAluno(alunos));
+		return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.postAluno(alunos));
 	}
 
-	@DeleteMapping("{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		Optional<Alunos> deleteAlunoId = alunoService.findById(id);
 
 		if (deleteAlunoId.isPresent()) {
 			alunoService.deleteAaluno(id);
 			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<Alunos> putAlunos(@RequestBody Alunos alunos, @PathVariable Long id) {
+		Alunos alunosUpdate = alunoService.putAluno(id, alunos);
+
+		if (alunosUpdate != null) {
+			return ResponseEntity.ok().body(alunosUpdate);
 		} else {
 			return ResponseEntity.notFound().build();
 		}
